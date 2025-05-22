@@ -5,7 +5,7 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Copia el archivo de requisitos primero, para aprovechar la caché de Docker
-COPY generar_datos.py validar_datos.py requirements.txt ./
+COPY sensores_pacientes.py requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia el resto de los archivos de tu aplicación
