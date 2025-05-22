@@ -110,7 +110,7 @@ for bloque in range(num_bloques):
                     "timestamp": t,
                     "ritmo_cardiaco": int(generar_ritmo_cardiaco()),
                     "spo2": round(generar_spo2(), 1),
-                    "temperatura": round(np.random.normal(36.6, 0.3), 1),
+                    "temperatura": round(np.random.normal(36.5, 0.3), 1),
                     "frecuencia_respiratoria": int(generar_frecuencia_respiratoria()),
                     "presion_sistolica": int(generar_presion_sistolica()),
                     "presion_diastolica": int(generar_presion_diastolica()),
