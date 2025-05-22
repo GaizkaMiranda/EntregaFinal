@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  fastapi:
+    build: .
+    ports:
+      - ${FASTAPI_PORT}:8000
+
+  influxdb:
+    image: influxdb:latest
+    volumes:
+      - influxdb-storage:/var/lib/influxdb2:rw
+    ports:
+      - ${DOCKER_INFLUXDB_INIT_PORT}:8086
+    env_file:
+      - .env
+    entrypoint: ["./entrypoint.sh"]
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana-storage:/var/lib/grafana:rw
+    ports:
+      - ${GRAFANA_PORT}:3000
+
+volumes:
+  grafana-storage:
+  influxdb-storage:

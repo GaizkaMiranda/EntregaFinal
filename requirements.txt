@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+python-jose[cryptography]
+httpx
+influxdb-client
+PyJWT
+pandas
+numpy
