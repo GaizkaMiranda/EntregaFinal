@@ -68,7 +68,7 @@ def generar_presion_diastolica():
 actividad_niveles = ['reposo', 'ligero', 'moderado', 'intenso']
 estados_animo = ['neutro', 'estresado', 'feliz', 'cansado']
 
-########################## Generar registros médicos por bloques ##########################
+########################## Generar registros medicos por bloques ##########################
 bloque_tam = 100
 num_bloques = num_registros // bloque_tam
 
