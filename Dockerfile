@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando que ejecuta el script (por ejemplo, primero generamos datos y luego validamos)
-CMD ["bash", "-c", "python generar_datos.py && python validar_datos.py"]
+CMD ["bash", "-c", "python sensores_pacientes.py && python models.py"]
