@@ -1,0 +1,11 @@
+paciente_id,nombre,dni,edad,hospital,ubicacion
+1,Carlos Ruiz,73593939E,33,Clínica del Norte,Bilbao
+2,Ana Torres,28940376G,55,Hospital Universitario de Álava - Txagorritxu,Vitoria-Gasteiz
+3,Luis Gómez,75852581J,63,Hospital Universitario de Álava - Txagorritxu,Vitoria-Gasteiz
+4,María López,11047471F,52,Hospital Central Sevilla,Sevilla
+5,Pedro Sánchez,21275746R,32,Hospital General Madrid,Madrid
+6,Lucía Fernández,55144231C,37,Hospital Central Sevilla,Sevilla
+7,Diego Herrera,16869618A,68,Hospital Central Sevilla,Sevilla
+8,Laura Castro,51449737D,77,Clínica del Norte,Bilbao
+9,Miguel Ortega,32565329S,74,Hospital Vall d'Hebron,Barcelona
+10,Sofía Moreno,91876849G,81,Hospital Central Sevilla,Sevilla
