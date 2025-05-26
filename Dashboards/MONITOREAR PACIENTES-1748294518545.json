@@ -1,0 +1,815 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fen27oko1oxdsa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "fen27oko1oxdsa"
+          },
+          "query": "from(bucket: \"deusto-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"salud\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ritmo_cardiaco\")\r\n  |> filter(fn: (r) => r[\"paciente_id\"] == \"${id_Paciente}\")\r\n  |> filter(fn: (r) => r[\"actividad\"] == \"${actividad}\")\r\n  |> filter(fn: (r) => r[\"estado_animo\"] == \"${estado_animo}\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "RITMO CARDIACO PACIENTES",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fen27oko1oxdsa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"deusto-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"salud\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"temperatura\")\r\n  |> filter(fn: (r) => r[\"paciente_id\"] == \"${id_Paciente}\")\r\n  |> filter(fn: (r) => r[\"actividad\"] == \"${actividad}\")\r\n  |> group(columns: [])           // <--- agrupar todo junto, sin etiquetas\r\n  |> mean()\r\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "TEMPERATURA EN REPOSO PACIENTES",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fen27oko1oxdsa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"deusto-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"salud\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"frecuencia_respiratoria\")\r\n  |> filter(fn: (r) => r[\"paciente_id\"] == \"${id_Paciente}\")\r\n  |> filter(fn: (r) => r[\"actividad\"] == \"${actividad}\")\r\n  |> filter(fn: (r) => r[\"estado_animo\"] == \"${estado_animo}\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "FRECUENCIA RESPIRATORIA PACIENTES (SPO2)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fen27oko1oxdsa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"deusto-bucket\")\r\n  |> range(start: -1h)  // últimos 1 hora, puedes usar variables también\r\n  |> filter(fn: (r) => r._measurement == \"salud\" and r._field == \"spo2\")\r\n  |> group(columns: [\"paciente_id\"])\r\n  |> aggregateWindow(every: 5m, fn: mean)\r\n  |> yield(name: \"mean\")",
+          "refId": "A"
+        }
+      ],
+      "title": "COMPARACIÓN FRECUENCIA RESPIRATORIA PACIENTES",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "fen27oko1oxdsa"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"cansado\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 1"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "4 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"cansado\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 2"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "6 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"cansado\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 3"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "2 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"estresado\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 4"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "1 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"feliz\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 5"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 6"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 2"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 1"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "10 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"feliz\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 6"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "4 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"feliz\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 7"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "6 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"neutro\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 8"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "8 {_field=\"pasos\", _start=\"2025-05-26 20:07:45.638 +0000 UTC\", _stop=\"2025-05-26 20:12:45.638 +0000 UTC\", actividad=\"ligero\", estado_animo=\"neutro\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Paciente 9"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 3"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 4"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 5"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 7"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 8"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Paciente 9"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "super-light-blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 15
+      },
+      "id": 5,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "query": "from(bucket: \"deusto-bucket\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"salud\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"pasos\")\r\n  |> filter(fn: (r) => r[\"actividad\"] == \"${actividad}\")\r\n  |> aggregateWindow(every: 3h, fn: sum, createEmpty: false)\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"paciente_id\"], valueColumn: \"_value\")\r\n  |> yield(name: \"sum\")",
+          "refId": "A"
+        }
+      ],
+      "title": "PASOS POR PACIENTES ULTIMAS 3 HORAS",
+      "type": "barchart"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "3",
+          "value": "3"
+        },
+        "includeAll": false,
+        "name": "id_Paciente",
+        "options": [
+          {
+            "selected": false,
+            "text": "1",
+            "value": "1"
+          },
+          {
+            "selected": false,
+            "text": "2",
+            "value": "2"
+          },
+          {
+            "selected": true,
+            "text": "3",
+            "value": "3"
+          },
+          {
+            "selected": false,
+            "text": "4",
+            "value": "4"
+          },
+          {
+            "selected": false,
+            "text": "5",
+            "value": "5"
+          },
+          {
+            "selected": false,
+            "text": "6",
+            "value": "6"
+          },
+          {
+            "selected": false,
+            "text": "7",
+            "value": "7"
+          },
+          {
+            "selected": false,
+            "text": "8",
+            "value": "8"
+          },
+          {
+            "selected": false,
+            "text": "9",
+            "value": "9"
+          },
+          {
+            "selected": false,
+            "text": "10",
+            "value": "10"
+          }
+        ],
+        "query": "1,2,3,4,5,6,7,8,9,10",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "ligero",
+          "value": "ligero"
+        },
+        "includeAll": false,
+        "name": "actividad",
+        "options": [
+          {
+            "selected": false,
+            "text": "reposo",
+            "value": "reposo"
+          },
+          {
+            "selected": false,
+            "text": "moderado",
+            "value": "moderado"
+          },
+          {
+            "selected": true,
+            "text": "ligero",
+            "value": "ligero"
+          }
+        ],
+        "query": "reposo,moderado,ligero",
+        "type": "custom"
+      },
+      {
+        "current": {
+          "text": "neutro",
+          "value": "neutro"
+        },
+        "includeAll": false,
+        "name": "estado_animo",
+        "options": [
+          {
+            "selected": false,
+            "text": "cansado",
+            "value": "cansado"
+          },
+          {
+            "selected": false,
+            "text": "estresado",
+            "value": "estresado"
+          },
+          {
+            "selected": false,
+            "text": "feliz",
+            "value": "feliz"
+          },
+          {
+            "selected": true,
+            "text": "neutro",
+            "value": "neutro"
+          }
+        ],
+        "query": "cansado,estresado,feliz,neutro",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "MONITOREAR PACIENTES",
+  "uid": "ben2awm1g43r4d",
+  "version": 45
+}

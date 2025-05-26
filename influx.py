@@ -11,7 +11,7 @@ client = InfluxDBClient(url=url, token=token, org=org)
 write_api = client.write_api(write_precision=WritePrecision.NS)
 
 
-with open('C:\\Users\\Hezitzaile\\Desktop\\asignaturas\\3\\2ºdo cuatri\\IoT\\EntregaFinal\\datos_salud_varios_pacientes.csv', 'r') as csvfile:
+with open('datos_salud_varios_pacientes.csv', 'r') as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
         dt = datetime.fromisoformat(row['timestamp'])
@@ -33,6 +33,6 @@ with open('C:\\Users\\Hezitzaile\\Desktop\\asignaturas\\3\\2ºdo cuatri\\IoT\\En
         )
         write_api.write(bucket=bucket, org=org, record=point)
         
-write_api.flush()
-client.close()
-print("Datos importados a InfluxDB")
+write_api.__del__()
+client.__del__()
+print("Datos importados correctamente a InfluxDB.")
