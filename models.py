@@ -1,9 +1,14 @@
 import pandas as pd
 from pydantic import BaseModel, ValidationError, validator
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple
 
-# Definición de modelos Pydantic para validar datos de pacientes
+
+# ----------------------------
+# Modelos Pydantic
+# ----------------------------
+
+
 class Paciente(BaseModel):
     paciente_id: int
     nombre: str
@@ -19,7 +24,6 @@ class Paciente(BaseModel):
         return v
 
 
-# Definición de modelo para registros médicos
 class RegistroMedico(BaseModel):
     paciente_id: int
     timestamp: datetime
@@ -58,41 +62,62 @@ class RegistroMedico(BaseModel):
         return v
 
 
-# Carga y validación de pacientes
-df_pacientes = pd.read_csv("pacientes.csv")
-pacientes_validos = []
+# ----------------------------
+# Funciones de validación
+# ----------------------------
 
-for _, row in df_pacientes.iterrows():
-    try:
-        paciente = Paciente(**row.to_dict())
-        pacientes_validos.append(paciente)
-    except ValidationError as e:
-        print(f"Error en paciente ID {row['paciente_id']}: {e}")
 
-# Carga y validación de registros médicos
-df_registros = pd.read_csv("datos_salud_varios_pacientes.csv")
-registros_validos = []
-
-for _, row in df_registros.iterrows():
+def validar_registro_dict(data: dict) -> Tuple[Optional[RegistroMedico], Optional[str]]:
+    """
+    Intenta validar un registro a partir de un dict.
+    Devuelve una tupla (RegistroMedico, None) si es válido,
+    o (None, mensaje_error) si no lo es.
+    """
     try:
         registro = RegistroMedico(
-            paciente_id=int(row["paciente_id"]),
-            timestamp=pd.to_datetime(row["timestamp"]),
-            ritmo_cardiaco=int(row["ritmo_cardiaco"]),
-            spo2=float(row["spo2"]),
-            temperatura=float(row["temperatura"]),
-            frecuencia_respiratoria=int(row["frecuencia_respiratoria"]),
-            presion_sistolica=int(row["presion_sistolica"]),
-            presion_diastolica=int(row["presion_diastolica"]),
-            actividad=row["actividad"],
-            pasos=int(row["pasos"]),
-            estado_animo=row["estado_animo"],
+            paciente_id=int(data["paciente_id"]),
+            timestamp=pd.to_datetime(data["timestamp"]),
+            ritmo_cardiaco=int(data["ritmo_cardiaco"]),
+            spo2=float(data["spo2"]),
+            temperatura=float(data["temperatura"]),
+            frecuencia_respiratoria=int(data["frecuencia_respiratoria"]),
+            presion_sistolica=int(data["presion_sistolica"]),
+            presion_diastolica=int(data["presion_diastolica"]),
+            actividad=data["actividad"],
+            pasos=int(data["pasos"]),
+            estado_animo=data["estado_animo"],
         )
-        registros_validos.append(registro)
+        return registro, None
     except ValidationError as e:
-        print(
-            f"Error en registro paciente ID {row['paciente_id']} timestamp {row['timestamp']}: {e}"
-        )
+        return None, str(e)
 
-print(f"Pacientes válidos: {len(pacientes_validos)}")
-print(f"Registros válidos: {len(registros_validos)}")
+
+# ----------------------------
+# Carga y validación en bloque
+# (opcional: solo si necesitas ejecutar standalone)
+# ----------------------------
+
+if __name__ == "__main__":
+    # Validar pacientes.csv
+    df_pacientes = pd.read_csv("pacientes.csv")
+    pacientes_validos = []
+    for _, row in df_pacientes.iterrows():
+        try:
+            p = Paciente(**row.to_dict())
+            pacientes_validos.append(p)
+        except ValidationError as e:
+            print(f"Error en paciente ID {row['paciente_id']}: {e}")
+
+    print(f"Pacientes válidos: {len(pacientes_validos)}")
+
+    # Validar datos_salud_v.csv
+    df_registros = pd.read_csv("datos_salud_v.csv")
+    registros_validos = []
+    for _, row in df_registros.iterrows():
+        reg, err = validar_registro_dict(row.to_dict())
+        if reg:
+            registros_validos.append(reg)
+        else:
+            print(f"Error en registro {row.to_dict()}: {err}")
+
+    print(f"Registros válidos: {len(registros_validos)}")

@@ -17,6 +17,16 @@ services:
     env_file:
       - .env
 
+  processor:
+    build: .
+    command: python process_records.py
+    depends_on:
+      - fastapi
+    volumes:
+      - ./data:/data
+    env_file:
+      - .env
+
   influxdb:
     image: influxdb:latest
     volumes:
