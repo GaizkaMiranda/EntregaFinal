@@ -5,18 +5,18 @@ from datetime import datetime
 token = "deusto2024-secret-token"
 org = "deusto-org"
 bucket = "deusto-bucket"
-url = "http://localhost:8088" 
+url = "http://localhost:8086"
 
 client = InfluxDBClient(url=url, token=token, org=org)
 write_api = client.write_api(write_precision=WritePrecision.NS)
 
 
-with open('datos_salud_varios_pacientes.csv', 'r') as csvfile:
+with open("datos_salud_varios_pacientes.csv", "r") as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        dt = datetime.fromisoformat(row['timestamp'])
+        dt = datetime.fromisoformat(row["timestamp"])
         timestamp = int(dt.timestamp() * 1e9)
-        
+
         point = (
             Point("salud")
             .tag("paciente_id", row["paciente_id"])
@@ -32,7 +32,7 @@ with open('datos_salud_varios_pacientes.csv', 'r') as csvfile:
             .time(timestamp, WritePrecision.NS)
         )
         write_api.write(bucket=bucket, org=org, record=point)
-        
+
 write_api.__del__()
 client.__del__()
 print("Datos importados correctamente a InfluxDB.")

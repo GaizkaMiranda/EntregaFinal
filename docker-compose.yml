@@ -1,17 +1,28 @@
-version: '3.7'
-
 services:
   fastapi:
     build: .
+    command: uvicorn main:app --host 0.0.0.0 --port ${FASTAPI_PORT}
     ports:
-      - ${FASTAPI_PORT}:8000
+      - "${FASTAPI_PORT}:8000"
+    volumes:
+      - ./data:/data            # Monta carpeta para CSVs
+    env_file:
+      - .env
+
+  simulator:
+    build: .
+    command: python simulator.py
+    depends_on:
+      - fastapi
+    env_file:
+      - .env
 
   influxdb:
     image: influxdb:latest
     volumes:
       - influxdb-storage:/var/lib/influxdb2:rw
     ports:
-      - ${DOCKER_INFLUXDB_INIT_PORT}:8086
+      - "${DOCKER_INFLUXDB_INIT_PORT}:8086"
     env_file:
       - .env
     entrypoint: ["./entrypoint.sh"]
@@ -21,7 +32,7 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana:rw
     ports:
-      - ${GRAFANA_PORT}:3000
+      - "${GRAFANA_PORT}:3000"
 
 volumes:
   grafana-storage:

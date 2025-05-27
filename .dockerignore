@@ -1,0 +1,18 @@
+# Ignora virtualenvs y caches
+venv/
+__pycache__/
+*.pyc
+
+# Control de versiones
+.git
+.gitignore
+
+# OneDrive y similares
+*.OneDrive*
+*.sync
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Datos de ejecución local
+data/

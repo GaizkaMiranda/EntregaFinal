@@ -7,3 +7,5 @@ influxdb-client
 PyJWT
 pandas
 numpy
+requests
+pre_commit

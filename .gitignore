@@ -1,4 +1,8 @@
 /__pycache__
 venv/
 mi_entorno/
+<<<<<<< HEAD
 env/
+=======
+data/
+>>>>>>> 0856441 (subo la simulación de datos con FastAPI)
