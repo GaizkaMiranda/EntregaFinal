@@ -7,7 +7,7 @@ import os
 app = FastAPI()
 
 DATA_DIR = "/data"
-CSV_FILE = os.path.join(DATA_DIR, "datos_salud.csv")
+CSV_FILE = os.path.join(DATA_DIR, "datos_salud_limpios.csv")
 FIELDNAMES = [
     "paciente_id",
     "timestamp",
