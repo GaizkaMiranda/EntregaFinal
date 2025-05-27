@@ -22,6 +22,7 @@ services:
     command: python process_records.py
     depends_on:
       - fastapi
+      - influxdb
     volumes:
       - ./data:/data
     env_file:

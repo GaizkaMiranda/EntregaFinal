@@ -1,11 +1,1 @@
 paciente_id,timestamp,ritmo_cardiaco,spo2,temperatura,frecuencia_respiratoria,presion_sistolica,presion_diastolica,actividad,pasos,estado_animo
-1,2025-05-27T08:43:39.973642,78,98.8,36.6,15,110,60,moderado,121,feliz
-2,2025-05-27T08:43:39.985000,70,99.6,36.2,13,123,75,moderado,9,feliz
-3,2025-05-27T08:43:39.991753,86,99.7,37.1,13,101,84,intenso,2,estresado
-4,2025-05-27T08:43:40.001451,68,95.6,36.0,16,108,62,moderado,84,cansado
-5,2025-05-27T08:43:40.011456,96,96.1,36.6,13,127,65,ligero,91,neutro
-6,2025-05-27T08:43:40.019174,76,99.3,37.2,18,100,62,reposo,67,estresado
-7,2025-05-27T08:43:40.027837,91,96.3,36.4,17,127,68,reposo,112,feliz
-8,2025-05-27T08:43:40.034168,83,96.4,36.8,20,102,69,moderado,70,neutro
-9,2025-05-27T08:43:40.044724,81,99.2,36.7,19,115,79,moderado,17,cansado
-10,2025-05-27T08:43:40.052749,88,99.5,37.4,17,106,65,reposo,49,feliz
