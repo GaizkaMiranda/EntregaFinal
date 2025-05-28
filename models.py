@@ -94,7 +94,6 @@ def validar_registro_dict(data: dict) -> Tuple[Optional[RegistroMedico], Optiona
 
 # ----------------------------
 # Carga y validación en bloque
-# (opcional: solo si necesitas ejecutar standalone)
 # ----------------------------
 
 if __name__ == "__main__":

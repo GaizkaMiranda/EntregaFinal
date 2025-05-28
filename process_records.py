@@ -7,7 +7,7 @@ from models import validar_registro_dict
 
 # --- Configuración InfluxDB vía variables de entorno ---
 INFLUX_URL = os.getenv("INFLUX_URL", "http://influxdb:8086")
-INFLUX_TOKEN = os.getenv("INFLUX_TOKEN", "deusto2024-secret-token")
+INFLUX_TOKEN = os.getenv("INFLUX_TOKEN", "deusto2025-secret-token")
 INFLUX_ORG = os.getenv("INFLUX_ORG", "deusto-org")
 INFLUX_BUCKET = os.getenv("INFLUX_BUCKET", "deusto-bucket")
 
