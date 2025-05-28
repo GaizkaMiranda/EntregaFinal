@@ -29,7 +29,7 @@ FIELDNAMES = [
     "pasos",
     "estado_animo",
 ]
-INTERVAL = int(os.getenv("PROCESS_INTERVAL", "15"))  # segundos
+INTERVAL = int(os.getenv("PROCESS_INTERVAL", "10"))  # segundos
 
 # --- Inicializar CSV de errores con cabecera si no existe ---
 if not os.path.isfile(ERROR_FILE):

@@ -13,7 +13,7 @@ estados_animo = ["neutro", "estresado", "feliz", "cansado"]
 
 
 def generar_dato(paciente_id):
-    return {
+    dato = {
         "paciente_id": paciente_id,
         "timestamp": datetime.utcnow().isoformat(),
         "ritmo_cardiaco": random.randint(60, 100),
@@ -26,6 +26,13 @@ def generar_dato(paciente_id):
         "pasos": random.randint(0, 200),
         "estado_animo": random.choice(estados_animo),
     }
+
+    # Introducir ocasionalmente un campo nulo (~10% de las veces)
+    if random.random() < 0.1:
+        campo_aleatorio = random.choice(list(dato.keys()))
+        dato[campo_aleatorio] = None
+
+    return dato
 
 
 if __name__ == "__main__":
