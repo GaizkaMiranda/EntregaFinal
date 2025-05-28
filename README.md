@@ -45,13 +45,25 @@ sudo docker-compose ps
 
 - **FASTAPI**: [http://localhost:8000](http://localhost:8000)  
 - **GRAFANA**: [http://localhost:3000](http://localhost:3000)  
-- **INFLUXDB**: [http://localhost:8088](http://localhost:8086)
+- **INFLUXDB**: [http://localhost:8086](http://localhost:8086)
 
 ### 4. DETENER LOS CONTENEDORES
 
 ```bash
 sudo docker-compose down
 ```
+
+### 5. Ejecutar n8n
+- Crear una cuenta en n8n cloud
+- Importar el flujo “Automatizacion_was.json”
+- Establecer las conexiones pertinentes (whatsapp y openAI)
+- Ejecutar ngrok http --url=usable-fox-flying.ngrok-free.app 8086 en la carpeta raíz de ngrok (el comando puede cambiar pero es el que ngrok te da para crear un tunel en un dominio estatico)
+- Pegar en n8n el url que se obtenga.
+- Credenciales n8n:
+  - url: https://deusto.app.n8n.cloud/
+  - email: ekaitzgarci@gmail.com
+  - password: Deusto2025
+
 
 ---
 
@@ -69,9 +81,9 @@ Después de iniciar los contenedores con `docker-compose up`, accede con:
 #### INTEGRACIÓN DE INFLUXDB COMO DATASOURCE:
 
 - **LENGUAJE DE CONSULTA**: FLUX  
-- **URL**: `http://influxdb:8088`
+- **URL**: `http://influxdb:8086`
 - **CREDENCIALES DE ADMIN**:
-  - USUARIO: `admin`
+  - USUARIO: `admin` o 
   - CONTRASEÑA: `admin`
 - **CREDENCIALES DE INFLUXDB**:
   - ORGANIZACIÓN: `deusto-org`
