@@ -2,14 +2,12 @@ import pandas as pd
 from pydantic import BaseModel, ValidationError, validator
 from datetime import datetime
 from typing import Optional, Tuple
-import random
-import numpy as np
-import os
 
 
 # ----------------------------
 # Modelos Pydantic
 # ----------------------------
+
 
 class Paciente(BaseModel):
     paciente_id: int
@@ -68,7 +66,13 @@ class RegistroMedico(BaseModel):
 # Funciones de validación
 # ----------------------------
 
+
 def validar_registro_dict(data: dict) -> Tuple[Optional[RegistroMedico], Optional[str]]:
+    """
+    Intenta validar un registro a partir de un dict.
+    Devuelve una tupla (RegistroMedico, None) si es válido,
+    o (None, mensaje_error) si no lo es.
+    """
     try:
         registro = RegistroMedico(
             paciente_id=int(data["paciente_id"]),
@@ -89,46 +93,31 @@ def validar_registro_dict(data: dict) -> Tuple[Optional[RegistroMedico], Optiona
 
 
 # ----------------------------
-# Generar CSV con errores para limpieza
-# ----------------------------
-
-def generar_registro_sucio(paciente_id: int) -> dict:
-    actividades = ["reposo", "ligero", "moderado", "intensa"]
-    estados = ["feliz", "neutro", "estresado", None]
-
-    def maybe_wrong(val, prob=0.05, wrong_val=None):
-        return wrong_val if random.random() < prob else val
-
-    return {
-        "paciente_id": paciente_id,
-        "timestamp": datetime.now().isoformat(),
-        "ritmo_cardiaco": maybe_wrong(random.randint(30, 200), 0.05, -20),
-        "spo2": maybe_wrong(round(random.uniform(90, 100), 1), 0.05, 150),
-        "temperatura": maybe_wrong(round(random.uniform(36.0, 38.5), 1), 0.05, 50),
-        "frecuencia_respiratoria": maybe_wrong(random.randint(10, 25), 0.05, -5),
-        "presion_sistolica": maybe_wrong(random.randint(90, 140), 0.05, 300),
-        "presion_diastolica": maybe_wrong(random.randint(60, 90), 0.05, 10),
-        "actividad": maybe_wrong(random.choice(actividades), 0.05, "desconocida"),
-        "pasos": maybe_wrong(random.randint(0, 200), 0.05, -10),
-        "estado_animo": random.choice(estados),
-    }
-
-
-# ----------------------------
-# Generación de datos sucios
+# Carga y validación en bloque
+# (opcional: solo si necesitas ejecutar standalone)
 # ----------------------------
 
 if __name__ == "__main__":
-    # Crear carpeta si no existe
-    os.makedirs("data", exist_ok=True)
+    # Validar pacientes.csv
+    df_pacientes = pd.read_csv("pacientes.csv")
+    pacientes_validos = []
+    for _, row in df_pacientes.iterrows():
+        try:
+            p = Paciente(**row.to_dict())
+            pacientes_validos.append(p)
+        except ValidationError as e:
+            print(f"Error en paciente ID {row['paciente_id']}: {e}")
 
-    # Generar datos sucios
-    registros_sucios = [generar_registro_sucio(random.randint(1, 10)) for _ in range(100)]
-    
-    # Introducir duplicados manualmente (últimos 5 duplican a los primeros 5)
-    registros_sucios += registros_sucios[:5]
+    print(f"Pacientes válidos: {len(pacientes_validos)}")
 
-    df_sucios = pd.DataFrame(registros_sucios)
-    df_sucios.to_csv("data/datos_salud.csv", index=False)
+    # Validar datos_salud_v.csv
+    df_registros = pd.read_csv("datos_salud_v.csv")
+    registros_validos = []
+    for _, row in df_registros.iterrows():
+        reg, err = validar_registro_dict(row.to_dict())
+        if reg:
+            registros_validos.append(reg)
+        else:
+            print(f"Error en registro {row.to_dict()}: {err}")
 
-    print(" Archivo con datos generado: data/datos_salud.csv")
+    print(f"Registros válidos: {len(registros_validos)}")
