@@ -1,6 +1,6 @@
  # ENTREGA FINAL
 
-Este proyecto es el resultado de una colaboración entre Gaizka Miranda, Ekaitz García y Eneko Fuente. El objetivo principal es demostrar la integración y funcionamiento de diversas tecnologías como **FASTAPI**, **INFLUXDB** y **GRAFANA** dentro de un entorno contenerizado con **DOCKER**.
+Este proyecto es el resultado de una colaboración entre Gaizka Miranda, Ekaitz García y Eneko Fuente. El objetivo principal es demostrar la integración y funcionamiento de diversas tecnologías como **FASTAPI**, INFLUXDB y GRAFANA dentro de un entorno contenerizado con DOCKER.
 
 ---
 
