@@ -1,0 +1,263 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Paso 1: Parseo y filtrado de líneas vacías\nconst csv = items[0].json.data.split('\\r\\n').filter(line => line);\n\n// Paso 2: Cabecera y filas\nconst [headerLine, ...rows] = csv;\nconst headers = headerLine.split(',');\n\n// Paso 3: Lista de columnas deseadas (asegúrate que estén en el CSV)\nconst columnasDeseadas = [\n  'paciente_id',\n  '_time', // Usaremos _time como timestamp\n  'ritmo_cardiaco',\n  'spo2',\n  'temperatura',\n  'frecuencia_respiratoria',\n  'presion_sistolica',\n  'presion_diastolica',\n  'actividad',\n  'pasos',\n  'estado_animo',\n];\n\n// Paso 4: Transformar y filtrar columnas\nconst registros = rows.map(row => {\n  const cols = row.split(',');\n  const obj = {};\n  headers.forEach((h, i) => {\n    if (columnasDeseadas.includes(h) || (h === '_time' && columnasDeseadas.includes('timestamp'))) {\n      const val = cols[i];\n      obj[h === '_time' ? 'timestamp' : h] = isNaN(val) ? val : Number(val);\n    }\n  });\n  return obj;\n});\n\n// Paso 5: Filtrar los que tienen paciente_id y ordenar\nregistrosFiltrados = registros.filter(r => r.paciente_id !== undefined)\n  .sort((a, b) => a.paciente_id - b.paciente_id);\n\n// Paso 6: Devolver en formato n8n\nreturn registrosFiltrados.map(r => ({ json: r }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        0
+      ],
+      "id": "f9b63975-14fd-408a-ac82-3e07fbba5471",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://usable-fox-flying.ngrok-free.app/api/v2/query",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "org",
+              "value": "deusto-org"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Token deusto2025-secret-token"
+            },
+            {
+              "name": "Accept",
+              "value": "text/csv"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.message.content }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        0
+      ],
+      "id": "40c492c5-e3f2-4472-b586-4ab183668396",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "CHATGPT-4O-LATEST"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Eres un asisitente que crea consultas flux para influxdb. Vas a recibir diferentes preguntas del tipo \"dame los datos del paciente con id 1 de los ultimos 15 minutos\" En este caso, vas a tener que responder algo como esto:\n{\n  \"query\": \"from(bucket: \\\"deusto-bucket\\\") |> range(start: -15m) |> filter(fn: (r) => r._measurement == \\\"salud\\\" and r.paciente_id == \\\"1\\\" and (r._field == \\\"ritmo_cardiaco\\\" or r._field == \\\"spo2\\\" or r._field == \\\"temperatura\\\" or r._field == \\\"frecuencia_respiratoria\\\" or r._field == \\\"presion_sistolica\\\" or r._field == \\\"presion_diastolica\\\" or r._field == \\\"pasos\\\")) |> pivot(rowKey:[\\\"_time\\\",\\\"paciente_id\\\",\\\"actividad\\\",\\\"estado_animo\\\"], columnKey:[\\\"_field\\\"], valueColumn:\\\"_value\\\")\",\n  \"dialect\": {\n    \"annotations\": []\n  }\n}\n\nLa respuesta tiene que ser sin saltos de línea y siempre vas a devolver cada columna de la tabla, tal y como en el ejemplo anterior. Otro ejemplo de consulta simple seria este:\n{\n  \"query\": \"from(bucket: \\\"deusto-bucket\\\") |> range(start: -15m) |> filter(fn: (r) => r._measurement == \\\"salud\\\" and (r._field == \\\"ritmo_cardiaco\\\" or r._field == \\\"spo2\\\" or r._field == \\\"temperatura\\\" or r._field == \\\"frecuencia_respiratoria\\\" or r._field == \\\"presion_sistolica\\\" or r._field == \\\"presion_diastolica\\\" or r._field == \\\"pasos\\\")) |> pivot(rowKey:[\\\"_time\\\",\\\"paciente_id\\\",\\\"actividad\\\",\\\"estado_animo\\\"], columnKey:[\\\"_field\\\"], valueColumn:\\\"_value\\\")\",\n  \"dialect\": {\n    \"annotations\": []\n  }\n}\n\nEn este caso, obtengo los datos de los ultimos 15 minutos de  la tabla. Ten en cuenta que el bucket siempre va a ser \"deusto-bucket\".\n\nCuando des tu respuesta, siempre añade todas las columnas que aparecen en los ejemplos. IMPORTANTE, recuerda darme todas y cada una de las columnas. Principalmente estas: paciente_id, timestamp ,ritmo_cardiaco, spo2, temperatura, frecuencia_respiratoria, presion_sistolica, presion_diastolica, actividad, pasos, estado_animo\n\n\nPor defecto, en caso de que no te digan nada sobre el tiempo, devuelve los datos de los últimos 15 minutos",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.messages[0].text.body }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -120,
+        0
+      ],
+      "id": "ce8ca3d6-a064-487a-bc37-5e3421e6cd75",
+      "name": "OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "GPgs5LHcn90MBURL",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -300,
+        0
+      ],
+      "id": "97203533-f832-4fdb-94b0-51b9159dea80",
+      "name": "WhatsApp Trigger",
+      "webhookId": "829e2586-49b5-42b3-aab2-737f99b8c612",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "EbtJJC7lQSiYpMYE",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "=551229314748524",
+        "recipientPhoneNumber": "34688822913",
+        "messageType": "document",
+        "mediaPath": "useMedian8n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        820,
+        0
+      ],
+      "id": "7a254e53-5853-4327-9c99-c5c31cff5cad",
+      "name": "WhatsApp Business Cloud",
+      "webhookId": "78c936ba-c780-46cd-96e9-dd01e2f1f5d5",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "JyhLrAInF4IWs4r2",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "xls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        620,
+        0
+      ],
+      "id": "58aac366-2466-4a5f-95ef-7bc32ed2c15b",
+      "name": "Convert to File"
+    }
+  ],
+  "pinData": {
+    "WhatsApp Trigger": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "15556303251",
+            "phone_number_id": "551229314748524"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Ekaitz Garcia"
+              },
+              "wa_id": "34688822913"
+            }
+          ],
+          "messages": [
+            {
+              "from": "34688822913",
+              "id": "wamid.HBgLMzQ2ODg4MjI5MTMVAgASGBQzRjJENkMwQ0VFREU1M0E5MUEzMwA=",
+              "timestamp": "1748445373",
+              "text": {
+                "body": "Dame los datos en los que la temperatura es mayor que 36.5 del ultimo minuto."
+              },
+              "type": "text"
+            }
+          ],
+          "field": "messages"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "23170eb0-d092-442b-9781-e8d3839aa717",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "08f00b2cbc8f9ee1c61499d8aabc9a83e38563c29aef8d8372ea058e17ec982b"
+  },
+  "id": "esmVuMSucwDlb3Lh",
+  "tags": []
+}
